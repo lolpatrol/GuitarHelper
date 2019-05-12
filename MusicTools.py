@@ -36,6 +36,57 @@ def get_the_scale(key):
 
 
 def get_the_mode(key, mode):
+    if "Pentatonic" in mode:
+        return get_pentatonic(key, mode)
+    elif "Blues" in mode:
+        return get_blues(key, mode)
+    else:
+        return get_the_mode_major(key, mode)
+
+
+def get_blues(key, mode):
+    a, b, s_type = mode.split(" ")
+    mode = a + " " + b
+    if s_type[1:-1] == "Hexatonic":
+        notes = get_pentatonic(key, mode)
+        if "Major" in mode:
+            notes[3] = notes[2]
+            n = 2
+        else:
+            notes[5] = notes[4]
+            n = 4
+        if "#" in notes[n]:
+            notes[n] = notes[n][-1]
+        else:
+            notes[n] += "b"
+        return notes
+    elif s_type[1:-1] == "Heptatonic":
+        notes = get_the_scale(key)
+        print(notes)
+        flat = [2, 4, 6]
+        for n in flat:
+            if "#" in notes[n]:
+                notes[n] = notes[n][:-1]
+            else:
+                notes[n] += "b"
+        print(notes)
+        return notes
+
+
+def get_pentatonic(key, mode):
+    to_remove = {
+        "Major": ("Ionian", [3, 6]),
+        "Minor": ("Aeolian", [1, 5])
+    }
+    m, _ = mode.split(" ")
+    notes = get_the_mode_major(key, to_remove[m][0])
+    for note in to_remove[m][1]:
+        notes[note] = ""
+    print("Pentatonic notes: ", notes)
+    return notes
+
+
+def get_the_mode_major(key, mode):
     modes = {
         "Ionian": [],
         "Dorian": ["b3", "b7"],
