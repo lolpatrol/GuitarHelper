@@ -5,7 +5,7 @@ from PIL import ImageTk, Image, ImageFont, ImageDraw
 # main window
 window = Tk()
 window.title("GH")
-window.geometry("1700x400")
+window.geometry("1200x400")
 
 # frame
 frame = Frame(window)
@@ -38,7 +38,9 @@ drop_down_key.set('C')
 
 # scale drop-down menu
 drop_down_scale = StringVar(window)
-scales = {'Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian', 'Major Pentatonic', 'Minor Pentatonic'}
+scales = {'Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian',
+          'Major Pentatonic', 'Minor Pentatonic', 'Major Blues (Hexatonic)', 'Minor Blues (Hexatonic)',
+          'Major Blues (Heptatonic)'}
 drop_down_scale.set('Ionian')
 
 orig_guitar = mt.mod_and_populate_fb(mt.get_the_mode("C", "Ionian"))
@@ -48,7 +50,6 @@ def change_drop_down(*args):
     """
     Update the fretboard image with new scales as they are chosen from the drop down menus.
     """
-
     s = drop_down_scale.get()
     k = drop_down_key.get()
     notes = mt.get_the_mode(k, s)
@@ -75,27 +76,36 @@ def change_drop_down(*args):
     canvas.itemconfig(image_on_canvas, image=tk_n_img)
     canvas.img = tk_n_img
     canvas.pack()
+    label_text = "This scale contains the notes: "+' '.join(notes)
+    scale_label.configure(text=label_text)
+    scale_label.place(x=600, y=365, anchor="center")
 
 
 popupMenu = OptionMenu(frame, drop_down_key, *keys)
-Label(frame, text="Choose a key").grid(row=1, column=1)
-popupMenu.grid(row=1, column=2)
+Label(frame, text="Choose a key").grid(row=1, column=0)
+popupMenu.grid(row=1, column=1)
 
 popupMenu2 = OptionMenu(frame, drop_down_scale, *scales)
-Label(frame, text="Choose a mode").grid(row=2, column=1)
-popupMenu2.grid(row=2, column=2)
+Label(frame, text="Choose a mode").grid(row=2, column=0)
+popupMenu2.grid(row=2, column=1)
 
 drop_down_scale.trace('w', change_drop_down)
 drop_down_key.trace('w', change_drop_down)
+
+# Display the scale in the window
+scale_label = Label(window, text="")
 
 
 def coords(event):
     """
     Get coordinates of mouse click on the fretboard and play the corresponding frequency.
     """
-    fret = 1+int((event.x-24)/(100 - 0.006*event.x))  # messy
-    string = 1+round((event.y-20)/37)
-    mt.play_note(string, fret)
+    # Polynomial regression of the span of the strings in the image.
+    string = int(1+2.221766438*(10**(-6))*(event.y**2)+0.026266286*event.y+1.407731511*(10**(-2)))
+    # From polynomial regression, as the frets aren't equally, nor standard spaced.
+    fret = int(1+1.386188513*(10**(-6))*(event.x**2)+9.254865544*(10**(-3))*event.x - 1.868150227*(10**(-1)))
+    if string <= 6 and fret <= 12:
+        mt.play_note(string, fret)
 
 
 canvas.bind("<Button 1>", coords)
