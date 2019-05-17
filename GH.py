@@ -33,14 +33,14 @@ image_on_canvas = canvas.create_image(0, 0, image=tk_img, anchor="nw")
 
 # key drop-down menu
 drop_down_key = StringVar(window)
-keys = {'Ab', 'A', 'A#', 'Bb', 'B', 'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#'}
+keys = ['Ab', 'A', 'A#', 'Bb', 'B', 'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#']
 drop_down_key.set('C')
 
 # scale drop-down menu
 drop_down_scale = StringVar(window)
-scales = {'Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian',
+scales = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian',
           'Major Pentatonic', 'Minor Pentatonic', 'Major Blues (Hexatonic)', 'Minor Blues (Hexatonic)',
-          'Major Blues (Heptatonic)'}
+          'Major Blues (Heptatonic)']
 drop_down_scale.set('Ionian')
 
 orig_guitar = mt.mod_and_populate_fb(mt.get_the_mode("C", "Ionian"))
