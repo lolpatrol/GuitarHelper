@@ -40,14 +40,14 @@ def get_the_mode(key, mode):
         return get_pentatonic(key, mode)
     elif "Blues" in mode:
         return get_blues(key, mode)
-    else:
+    else:  # else it's simply a mode of the major scale
         return get_the_mode_major(key, mode)
 
 
 def get_blues(key, mode):
     a, b, s_type = mode.split(" ")
     mode = a + " " + b
-    if s_type[1:-1] == "Hexatonic":
+    if "Hexatonic" in s_type:
         notes = get_pentatonic(key, mode)
         if "Major" in mode:
             notes[3] = notes[2]
@@ -60,7 +60,7 @@ def get_blues(key, mode):
         else:
             notes[n] += "b"
         return notes
-    elif s_type[1:-1] == "Heptatonic":
+    elif "Heptatonic" in s_type:
         notes = get_the_scale(key)
         print(notes)
         flat = [2, 4, 6]
